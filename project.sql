@@ -1,27 +1,28 @@
-# 1 .Create Database
+-- Create Database
 CREATE DATABASE WalmartSalesData;
 USE WalmartSalesData;
 
-# 2. Create Sales Table
-CREATE TABLE Sales (
-    invoice_id VARCHAR(20) PRIMARY KEY,
-    branch CHAR(1),
-    city VARCHAR(50),
-    customer_type VARCHAR(10),
-    gender VARCHAR(10),
-    product_line VARCHAR(50),
-    unit_price DECIMAL(10,2),
-    quantity INT,
-    tax DECIMAL(10,2),
-    total DECIMAL(10,2),
-    date DATE,
-    time TIME,
-    payment_method VARCHAR(20),
-    cogs DECIMAL(10,2),
-    gross_margin_percentage DECIMAL(10,2),
-    gross_income DECIMAL(10,2),
-    rating DECIMAL(3,1)
+-- Create table
+CREATE TABLE IF NOT EXISTS sales (
+    invoice_id VARCHAR(30) NOT NULL PRIMARY KEY,
+    branch VARCHAR(5) NOT NULL,
+    city VARCHAR(30) NOT NULL,
+    customer_type VARCHAR(30) NOT NULL,
+    gender VARCHAR(30) NOT NULL,
+    product_line VARCHAR(100) NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    quantity INT NOT NULL,
+    tax_pct FLOAT(6,4) NOT NULL,
+    total DECIMAL(12,4) NOT NULL,
+    date DATETIME NOT NULL,
+    time TIME NOT NULL,
+    payment VARCHAR(15) NOT NULL,
+    cogs DECIMAL(10,2) NOT NULL,
+    gross_margin_pct FLOAT(11,9),
+    gross_income DECIMAL(12,4),
+    rating FLOAT(2,1)
 );
+
 SHOW TABLES;
 SELECT * FROM sales
 
@@ -89,6 +90,9 @@ SELECT DISTINCT city, branch FROM sales;
 
 -- Count unique product lines
 SELECT COUNT(DISTINCT product_line) AS unique_product_lines FROM sales;
+
+-- Most common payment method
+SELECT payment, COUNT(payment) AS count FROM sales GROUP BY payment ORDER BY count DESC LIMIT 1;
 
 -- Best selling product line
 SELECT product_line, SUM(quantity) AS total_sold FROM sales GROUP BY product_line ORDER BY total_sold DESC LIMIT 1;
@@ -161,4 +165,3 @@ SELECT DAYNAME(date) AS weekday, AVG(rating) AS avg_rating FROM sales GROUP BY w
 
 -- Best average rating per branch per weekday
 SELECT branch, DAYNAME(date) AS weekday, AVG(rating) AS avg_rating FROM sales GROUP BY branch, weekday ORDER BY branch, avg_rating DESC;
-
